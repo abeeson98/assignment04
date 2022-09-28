@@ -1,0 +1,32 @@
+---
+title: "Assignment04"
+author: "Alexa Beeson acb343"
+format: html
+---
+#Data Source: American Community Survey via
+[IPUMS USA](https://usa.ipums.org/usa/)
+
+Loading in relevant programs
+```{r}
+library(ipumsr)
+library(tidyverse)
+library(haven)
+library(ggplot2)
+library(srvyr)
+```
+
+Reading in the data set:
+```{r}
+ddi <- read_ipums_ddi("usa_00001.xml")
+data <- read_ipums_micro(ddi)
+```
+
+```{r}
+
+```
+
+
+```{r}
+
+```
+
