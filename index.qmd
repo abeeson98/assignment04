@@ -104,3 +104,40 @@ wdata%>%
 ```
 # Visualization Description:
 As mentioned in the description of visualization 1, it is important to break down the raw count numbers for insurance rate into statistics that actually mean something to us. In this bar chart, we actually compare the proportions of respondents who are insured between different race categories. Here, we can see that while 92.6% of white respondents were insured, only 77.8% of American Indian and Alaskan Native respondents were insured. This is a huge disparity. While of course policies have been put in place to decrease the rates of uninsurance overall in the United States, like the Affordable Care Act, it is clear that we need more nuanced and equity-focused policies which target certain populations who face higher rates of uninsurance than others.
+
+# Data Visualization 3:
+
+Determining insurance status based on age and income
+
+```{r}
+data %>%
+  filter(AGE>18, HHINCOME!=9999999) %>%
+  mutate(insurance=
+           case_when(
+             HCOVANY== 1 ~ "No",
+             HCOVANY== 2 ~ "Yes"
+           )
+         ) %>%
+  mutate(race_string=
+    case_when(
+      RACE ==1 ~ "White",
+      RACE ==2 ~ "Black",
+      RACE ==3 ~ "American Indian/Alaskan Native",
+      RACE ==4 | 5 | 6 ~ "Asian/Pacific Islander",
+      RACE == 7 | 8| 9 ~ "Other Race"
+    )
+    ) %>%
+  ggplot()+
+  geom_point(mapping=aes(x=race_string, y=HHINCOME, color=insurance))+
+  scale_y_log10() +
+  labs(
+    x="Race Category",
+    y="Income, on log10 scale",
+    title="Observing the Variance in Insurance Status by Income and Race",
+    color="Is respondent insured?"
+  )+
+  guides(x=guide_axis(n.dodge=2))
+```
+# Visualization Description:
+This point graph adds another element to our understanding of insurance rates among certain sub-populations. Here, the graph is broken up by race category, observed over all income values, and delineates whether the respondent has health insurance or not. I decided to use the log10 scale for income to more accurately depict the effect in levels of income on insurance status, given a certain race category. We can see here that for white respondents, those with high levels of income were always insured. On the other hand, there is a wider distribution in the American Indian respondents without insurance, where even those with high incomes still did not have access to insurance. Similarly, there are Asian, Pacific Islander, and Black respondents wtih high levels of income who are uninsured, especially when compared to the white respondents.
+This shows us again the need for an equity-based approach to solving the uninsurance problem in the United States. There are clear racial disparities, even at high income levels, that prevent certain populations from accessing insurance.
