@@ -1,14 +1,17 @@
 ---
 title: "Assignment04"
 author: "Alexa Beeson acb343"
-format: pdf
+format: html
+self-contained: true
+code-fold: true
+code-summary: "Show the code"
 ---
 
 # Data Source: American Community Survey via [IPUMS USA](https://usa.ipums.org/usa/)
 
-Loading in relevant programs
+Step 1: Loading in relevant programs
 
-```{r}
+```{r message=FALSE}
 library(ipumsr)
 library(tidyverse)
 library(haven)
@@ -16,17 +19,17 @@ library(ggplot2)
 library(srvyr)
 ```
 
-Reading in the data set:
+Step 2: Reading in the data set:
 
-```{r}
+```{r warning=FALSE}
 setwd("data")
 ddi <- read_ipums_ddi("usa_00002.xml")
 data <- read_ipums_micro(ddi)
 ```
 
-Applying the appropriate weights to the sample:
+Step 3: Applying the appropriate weights to the sample:
 
-```{r}
+```{r message=FALSE}
 wdata <- data %>%
     as_survey_design(weights=HHWT)
 ```
@@ -34,6 +37,7 @@ wdata <- data %>%
 # Data Visualization 1:
 
 Counting the number of insured adult respondents
+
 ```{r}
 data %>%
   filter(AGE>18) %>%
@@ -45,7 +49,9 @@ data %>%
   group_by(insurance) %>%
   count(insurance)
 ```
+
 Creating a plot to summarize the results:
+
 ```{r}
 options(scipen=999)
 data %>%
@@ -66,7 +72,9 @@ data %>%
   scale_x_discrete()+
   theme_light()
 ```
+
 # Visualization Description:
+
 This first data visualization helps us break down the population of respondents by whether or not they are insured. This bar graph depicts the count of people who are insured and compares it to the number of people who are uninsured. We can see that while over 2.3 million respondents are insured, there are still over 200,000 who are not. If we just examine the raw count of respondents with health insurance, it may trick us into underestimating the true number of people who remain uninsured despite changes to our health insurance systems, like expanding Medicaid, offering subsidies to buy insurance, and creating stronger regulations on private insurance. Insurance status in the United States can literally mean life or death for a sick person, so it is important to dive further into those 220,000+ uninsured respondents to see if there are any patterns in people who remain uninsured.
 
 # Data Visualization 2:
@@ -102,14 +110,16 @@ wdata%>%
     subtitle= "Comparing the proportions of people with insurance by race in 2019"
   )
 ```
+
 # Visualization Description:
+
 As mentioned in the description of visualization 1, it is important to break down the raw count numbers for insurance rate into statistics that actually mean something to us. In this bar chart, we actually compare the proportions of respondents who are insured between different race categories. Here, we can see that while 92.6% of white respondents were insured, only 77.8% of American Indian and Alaskan Native respondents were insured. This is a huge disparity. While of course policies have been put in place to decrease the rates of uninsurance overall in the United States, like the Affordable Care Act, it is clear that we need more nuanced and equity-focused policies which target certain populations who face higher rates of uninsurance than others.
 
 # Data Visualization 3:
 
 Determining insurance status based on age and income
 
-```{r}
+```{r warning=FALSE}
 data %>%
   filter(AGE>18, HHINCOME!=9999999) %>%
   mutate(insurance=
@@ -138,11 +148,13 @@ data %>%
   )+
   guides(x=guide_axis(n.dodge=2))
 ```
-# Visualization Description:
-This point graph adds another element to our understanding of insurance rates among certain sub-populations. Here, the graph is broken up by race category, observed over all income values, and delineates whether the respondent has health insurance or not. I decided to use the log10 scale for income to more accurately depict the effect in levels of income on insurance status, given a certain race category. We can see here that for white respondents, those with high levels of income were always insured. On the other hand, there is a wider distribution in the American Indian respondents without insurance, where even those with high incomes still did not have access to insurance. Similarly, there are Asian, Pacific Islander, and Black respondents wtih high levels of income who are uninsured, especially when compared to the white respondents.
-This shows us again the need for an equity-based approach to solving the uninsurance problem in the United States. There are clear racial disparities, even at high income levels, that prevent certain populations from accessing insurance.
 
-# Data Visualization 4: 
+# Visualization Description:
+
+This point graph adds another element to our understanding of insurance rates among certain sub-populations. Here, the graph is broken up by race category, observed over all income values, and delineates whether the respondent has health insurance or not. I decided to use the log10 scale for income to more accurately depict the effect in levels of income on insurance status, given a certain race category. We can see here that for white respondents, those with high levels of income were always insured. On the other hand, there is a wider distribution in the American Indian respondents without insurance, where even those with high incomes still did not have access to insurance. Similarly, there are Asian, Pacific Islander, and Black respondents wtih high levels of income who are uninsured, especially when compared to the white respondents. This shows us again the need for an equity-based approach to solving the uninsurance problem in the United States. There are clear racial disparities, even at high income levels, that prevent certain populations from accessing insurance.
+
+# Data Visualization 4:
+
 Understanding Insurance Type by Race
 
 ```{r}
@@ -185,4 +197,5 @@ insurancecount %>%
 ```
 
 # Describing the Visualization:
-This is just yet another visualization depicting the need for an equity focus in determining solutions to target the uninsured populations in the United States. Although size-for-frequency based representations of data are usually not the ideal choice to depict small variations in frequency, this visualization actually does a good job in depicting the wide difference in type of insurance, as broken down by race. When looking at the difference in the size of circles per race category, we can see some really big differences in proportions of insurance type. White respondents overwhelmingly answered that they had private insurance. This is usually employer-sponsored, which usually only full-time employees can access. Medicare is for seniors and individuals with permanent disabilities. Medicaid is an entitlement program for low-income individuals. You can see among the American Indian/Alaskan Native, Asian/Pacific Islander, and Black respondents, there is actually much less variation in the insurance type as compared to the variation among white respondents. Again, here, this demonstrates that we need to focus on health insurance disparities by race to ensure that health outcomes are equitable and that no specific sub-populations are facing greater barriers to care. 
+
+This is just yet another visualization depicting the need for an equity focus in determining solutions to target the uninsured populations in the United States. Although size-for-frequency based representations of data are usually not the ideal choice to depict small variations in frequency, this visualization actually does a good job in depicting the wide difference in type of insurance, as broken down by race. When looking at the difference in the size of circles per race category, we can see some really big differences in proportions of insurance type. White respondents overwhelmingly answered that they had private insurance. This is usually employer-sponsored, which usually only full-time employees can access. Medicare is for seniors and individuals with permanent disabilities. Medicaid is an entitlement program for low-income individuals. You can see among the American Indian/Alaskan Native, Asian/Pacific Islander, and Black respondents, there is actually much less variation in the insurance type as compared to the variation among white respondents. Again, here, this demonstrates that we need to focus on health insurance disparities by race to ensure that health outcomes are equitable and that no specific sub-populations are facing greater barriers to care.
