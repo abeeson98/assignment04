@@ -83,3 +83,50 @@ data %>%
 # Visualization Description:
 
 This point graph adds another element to our understanding of insurance rates among certain sub-populations. Here, the graph is broken up by race category, observed over all income values, and delineates whether the respondent has health insurance or not. I decided to use the log10 scale for income to more accurately depict the effect in levels of income on insurance status, given a certain race category. We can see here that for white respondents, those with high levels of income were always insured. On the other hand, there is a wider distribution in the American Indian respondents without insurance, where even those with high incomes still did not have access to insurance. Similarly, there are Asian, Pacific Islander, and Black respondents wtih high levels of income who are uninsured, especially when compared to the white respondents. This shows us again the need for an equity-based approach to solving the uninsurance problem in the United States. There are clear racial disparities, even at high income levels, that prevent certain populations from accessing insurance.
+
+# Data Visualization 4:
+
+Understanding Insurance Type by Race
+
+```{r}
+insurancecount <- data %>%
+  filter(AGE>18) %>%
+  mutate(race_string=
+    case_when(
+      RACE ==1 ~ "White",
+      RACE ==2 ~ "Black",
+      RACE ==3 ~ "American Indian/Alaskan Native",
+      RACE ==4 | 5 | 6 ~ "Asian/Pacific Islander",
+      RACE == 7 | 8| 9 ~ "Other Race"
+    )
+    ) %>%
+  mutate(instype= case_when(
+    HCOVANY ==1 ~ "Uninsured",
+    HCOVANY==2 & HCOVPRIV ==2 ~ "Private Insurance",
+    HCOVANY==2 & HCOVPUB==2 & HINSCARE==2 ~ "Medicare",
+    HCOVANY==2 & HCOVPUB==2 & HINSCARE==1 ~ "Medicaid"
+  )) %>%
+  group_by(race_string) %>%
+  count(instype)
+```
+
+```{r}
+insurancecount %>%
+  ggplot()+
+  geom_point(aes(x=race_string, y=instype, size=n, color=race_string))+
+  scale_x_discrete()+
+  scale_y_discrete()+
+  scale_radius(range=c(2,15))+
+  guides(x=guide_axis(angle=45))+
+  theme_minimal()+
+  labs(
+    x="Race Category",
+    y="Insurance Type",
+    title="Comparing Insurance Type by Race",
+    subtitle="Visualizing the proportion of insurance types with circle size")+
+  theme(legend.position = "none")
+```
+
+# Describing the Visualization:
+
+This is just yet another visualization depicting the need for an equity focus in determining solutions to target the uninsured populations in the United States. Although size-for-frequency based representations of data are usually not the ideal choice to depict small variations in frequency, this visualization actually does a good job in depicting the wide difference in type of insurance, as broken down by race. When looking at the difference in the size of circles per race category, we can see some really big differences in proportions of insurance type. White respondents overwhelmingly answered that they had private insurance. This is usually employer-sponsored, which usually only full-time employees can access. Medicare is for seniors and individuals with permanent disabilities. Medicaid is an entitlement program for low-income individuals. You can see among the American Indian/Alaskan Native, Asian/Pacific Islander, and Black respondents, there is actually much less variation in the insurance type as compared to the variation among white respondents. Again, here, this demonstrates that we need to focus on health insurance disparities by race to ensure that health outcomes are equitable and that no specific sub-populations are facing greater barriers to care.
