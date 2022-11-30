@@ -1,0 +1,85 @@
+---
+title: "Strech04"
+author: "Alexa Beeson"
+format: html
+---
+# Data Visualization 1:
+
+Counting the number of insured adult respondents
+
+```{r}
+data %>%
+  filter(AGE>18) %>%
+    mutate(insurance=
+           case_when(
+             HCOVANY==1 ~ "Uninsured",
+             HCOVANY==2 ~ "Insured"
+           )) %>%
+  group_by(insurance) %>%
+  count(insurance)
+```
+
+Creating a plot to summarize the results:
+
+```{r}
+options(scipen=999)
+data %>%
+  filter(AGE>18) %>%
+  mutate(insurance=
+           case_when(
+             HCOVANY==1 ~ "Uninsured",
+             HCOVANY==2 ~ "Insured"
+           )) %>%
+  ggplot(aes(x=insurance))+
+  geom_bar(stat="count") +
+  labs(
+    x="Insurance Status",
+    y="Observations of Insurance Categories",
+    title="A Count of the Number of Adults with and without Insurance",
+    subtitle="Comparing the number of insured to uninsured respondents in 2019"
+  )+
+  scale_x_discrete()+
+  theme_light()
+```
+
+# Visualization Description:
+
+This first data visualization helps us break down the population of respondents by whether or not they are insured. This bar graph depicts the count of people who are insured and compares it to the number of people who are uninsured. We can see that while over 2.3 million respondents are insured, there are still over 200,000 who are not. If we just examine the raw count of respondents with health insurance, it may trick us into underestimating the true number of people who remain uninsured despite changes to our health insurance systems, like expanding Medicaid, offering subsidies to buy insurance, and creating stronger regulations on private insurance. Insurance status in the United States can literally mean life or death for a sick person, so it is important to dive further into those 220,000+ uninsured respondents to see if there are any patterns in people who remain uninsured.
+
+# Data Visualization 2:
+
+Comparing the *proportions* of people who are insured by race
+
+```{r}
+options(scipen=999)
+wdata%>%
+  mutate(anyins=
+           case_when(HCOVANY==1 ~ 0, HCOVANY==2 ~ 1)) %>%
+  filter(AGE>18) %>%
+  mutate(race_string=
+    case_when(
+      RACE ==1 ~ "White",
+      RACE ==2 ~ "Black",
+      RACE ==3 ~ "American Indian/Alaskan Native",
+      RACE ==4 | 5 | 6 ~ "Asian/Pacific Islander",
+      RACE == 7 | 8| 9 ~ "Other Race"
+    )
+  ) %>%
+  group_by(race_string) %>%
+  summarize(propinsurance=
+              mean(anyins)) %>%
+  ggplot() +
+  geom_col(mapping=aes(x=race_string, y=propinsurance)) +
+  geom_text(aes(x=race_string, y=propinsurance, label=round(propinsurance, digits=3)),
+            position=position_stack(vjust=0.5)) +
+  labs(
+    x= "Race Category",
+    y= "Proportion of Insured Individuals",
+    title= "Understanding the Number of People with Any Insurance",
+    subtitle= "Comparing the proportions of people with insurance by race in 2019"
+  )
+```
+
+# Visualization Description:
+
+As mentioned in the description of visualization 1, it is important to break down the raw count numbers for insurance rate into statistics that actually mean something to us. In this bar chart, we actually compare the proportions of respondents who are insured between different race categories. Here, we can see that while 92.6% of white respondents were insured, only 77.8% of American Indian and Alaskan Native respondents were insured. This is a huge disparity. While of course policies have been put in place to decrease the rates of uninsurance overall in the United States, like the Affordable Care Act, it is clear that we need more nuanced and equity-focused policies which target certain populations who face higher rates of uninsurance than others.
